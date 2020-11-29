@@ -1399,11 +1399,25 @@ function clampInit(){
 }
 clampInit();
 
+/*Tippy.js*/
+function tippyInit(){
+	//Reference Popover
+	tippy('sup.reference[data-content]:not(tippy-initialized)', {
+		content: (reference) => reference.getAttribute('data-content'),
+		allowHTML: true,
+		interactive: true,theme: 'light scroll-y',
+		delay: [100, 250],
+		animation: 'fade'
+	});
+	$("sup.reference[data-content]:not(tippy-initialized)").addClass("tippy-initialized");
+}
+tippyInit();
+
 /*Pjax*/
 $.pjax.defaults.timeout = 10000;
 $.pjax.defaults.container = ['#primary', '#leftbar_part1_menu', '#leftbar_part2_inner', '.page-information-card-container', '#wpadminbar'];
 $.pjax.defaults.fragment = ['#primary', '#leftbar_part1_menu', '#leftbar_part2_inner', '.page-information-card-container', '#wpadminbar'];
-$(document).pjax("a[href]:not([no-pjax]):not(.no-pjax):not([target='_blank']):not([download])")
+$(document).pjax("a[href]:not([no-pjax]):not(.no-pjax):not([target='_blank']):not([download]):not(.reference-link):not(.reference-list-backlink)")
 .on('pjax:click', function(e, f, g){
 	if (argonConfig.disable_pjax == true){
 		e.preventDefault();
@@ -1460,6 +1474,7 @@ $(document).pjax("a[href]:not([no-pjax]):not(.no-pjax):not([target='_blank']):no
 	highlightJsRender();
 	panguInit();
 	clampInit();
+	tippyInit();
 	getGithubInfoCardContent();
 	showPostOutdateToast();
 	calcHumanTimesOnPage();
@@ -1478,6 +1493,21 @@ $(document).pjax("a[href]:not([no-pjax]):not(.no-pjax):not([target='_blank']):no
 	lazyloadInit();
 });
 
+/*Reference 跳转*/
+$(document).on("click", ".reference-link , .reference-list-backlink" , function(e){
+	e.preventDefault();
+	$target = $($(this).attr("href"));
+	$("body,html").animate({
+		scrollTop: $target.offset().top - document.body.clientHeight / 2 - 75
+	}, 500)
+	setTimeout(function(){
+		if ($target.is("li")){
+			$(".space", $target).focus();
+		}else{
+			$target.focus();
+		}
+	}, 1);
+});
 
 /*Tags Dialog pjax 加载后自动关闭*/
 $(document).on("click" , "#blog_tags .tag" , function(){

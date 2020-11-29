@@ -3,7 +3,7 @@ Theme Name: argon
 Author: solstice23
 Author URI: https://solstice23.top/
 Description: 轻盈、简洁、美观的 Wordpress 主题
-Version: 1.1.2.1
+Version: 1.1.4
 License: GNU General Public License v3.0
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Tags: 简约, 两栏, 侧栏在左边, 浮动侧栏, 文章目录, 自适应, 夜间模式, 可自定义
@@ -1468,6 +1468,73 @@ html.filter-grayscale{
 }
 .additional-content-after-post + .post-tags {
 	margin-top: 25px;
+}
+/*Reference*/
+sup.reference {
+	white-space: nowrap;
+	transition: box-shadow .3s ease;
+	border-radius: 1px;
+}
+sup.reference:focus {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(var(--themecolor-rgbstr), .3);
+	outline: none;
+}
+html.darkmode sup.reference:focus {
+	box-shadow: 0 0 0 2px #424242, 0 0 0 4px rgba(var(--themecolor-rgbstr), .8);
+}
+html.darkmode.amoled-dark sup.reference:focus {
+	box-shadow: 0 0 0 2px #000, 0 0 0 4px rgba(var(--themecolor-rgbstr), .8);
+}
+.tippy-box[data-theme~='scroll-y'] .tippy-content {
+	max-height: 200px;
+	overflow-y: auto;
+}
+html.darkmode .tippy-box[data-theme~=light]{color:#eee;background-color:#363636}html.darkmode .tippy-box[data-theme~=light][data-placement^=top]>.tippy-arrow:before{border-top-color:#363636}html.darkmode .tippy-box[data-theme~=light][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:#363636}html.darkmode .tippy-box[data-theme~=light][data-placement^=left]>.tippy-arrow:before{border-left-color:#363636}html.darkmode .tippy-box[data-theme~=light][data-placement^=right]>.tippy-arrow:before{border-right-color:#363636}html.darkmode .tippy-box[data-theme~=light]>.tippy-backdrop{background-color:#363636}html.darkmode .tippy-box[data-theme~=light]>.tippy-svg-arrow{fill:#363636}
+html.darkmode.amoled-dark .tippy-box[data-theme~=light]{color:#eee;background-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light][data-placement^=top]>.tippy-arrow:before{border-top-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light][data-placement^=bottom]>.tippy-arrow:before{border-bottom-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light][data-placement^=left]>.tippy-arrow:before{border-left-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light][data-placement^=right]>.tippy-arrow:before{border-right-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light]>.tippy-backdrop{background-color:#222}html.darkmode.amoled-dark .tippy-box[data-theme~=light]>.tippy-svg-arrow{fill:#222}
+.reference-list {
+	padding-left: 0;
+	list-style: inside none;
+	counter-reset: ol;
+	margin-bottom: 0;
+}
+.reference-list li{
+	font-size: 14px;
+	position: relative;
+	display: flex;
+}
+.reference-list li .space {
+	pointer-events: none;
+}
+.reference-list li .space:before {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: block;
+	border-radius: 3px;
+	transition: background .3s ease;
+	pointer-events: none;
+	background: transparent;
+}
+.reference-list li .space:focus:before {
+	background: rgba(var(--themecolor-rgbstr), .15);
+}
+.reference-list li:before{
+	text-align: right;
+	counter-increment: ol;
+	content: counter(ol) ". ";
+	white-space: pre;
+}
+.reference-list li > div > *:first-child{
+	margin-right: 5px;
+}
+.reference-list li > div > sup{
+	margin-left: 1px;
+}
+.reference-list li > div > sup:last-of-type{
+	margin-right: 5px;
 }
 /*文章输入密码界面*/
 .post-password-form{
@@ -3543,6 +3610,7 @@ code[hljs-codeblock-inner] {
 	width: 30px;
 	overflow-x: visible !important;
 	transition: all .3s ease;
+	background: transparent !important;
 }
 .hljs-ln-numbers:before {
 	content: '';
@@ -4247,6 +4315,11 @@ html.darkmode.amoled-dark #content:before , html.darkmode.amoled-dark #content:a
 		width: 100vw;
 		z-index: 1049;
 		background: transparent;
+	}
+	.navbar-nav:not(#navbar_search_btn_mobile) > .nav-item i:not(.d-lg-none){
+		margin-right: 8px;
+		text-align: center;
+		width: 14px;
 	}
 
 	.navbar-nav:not(#navbar_search_btn_mobile) > .nav-item i:not(.d-lg-none){

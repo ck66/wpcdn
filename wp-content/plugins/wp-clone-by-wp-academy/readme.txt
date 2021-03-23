@@ -4,8 +4,8 @@ Tags: migrate, clone, backup, migration, backups, copy, restore, recover, restor
 Author URI: https://backupbliss.com
 Requires PHP: 5.5
 Requires at least: 3.3
-Tested up to: 5.6
-Stable tag: 2.3.1
+Tested up to: 5.7.1
+Stable tag: 2.3.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
@@ -154,5 +154,5 @@ Backup and migration FAQ are under construction
 
 == Upgrade Notice ==
 
-= 2.3.1 =
+= 2.2.10 =
 * Please upgrade!

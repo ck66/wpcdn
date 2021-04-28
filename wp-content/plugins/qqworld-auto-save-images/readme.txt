@@ -3,9 +3,9 @@ Contributors: qqworld
 Donate link: https://www.qqworld.org
 Tags: auto, save, local, fetch, images
 Requires at least: 3.5
-Tested up to: 5.5.1
-Requires PHP: 5.6
-Stable tag: 1.9.6
+Tested up to: 5.7
+Requires PHP: 5.6+
+Stable tag: 1.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -159,6 +159,10 @@ QQ：172269588
 6. 用户界面 - 扫描文章
 
 == Changelog ==
+= 1.9.7 =
+New feature: Fix the bug that the backslash will be added automatically in manual mode.<br />
+新特性：修复手动模式下会自动加反斜杠的Bug。
+
 = 1.9.6 =
 New feature: Because the plugin does not support the Gutenberg Editor, the Classic Editor is used by default.<br />
 新特性：因插件不支持古腾堡编辑器，默认使用经典编辑器。

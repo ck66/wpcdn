@@ -5,7 +5,7 @@ Tags: auto, save, local, fetch, images
 Requires at least: 3.5
 Tested up to: 5.7
 Requires PHP: 5.6+
-Stable tag: 1.9.7
+Stable tag: 1.9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -159,6 +159,10 @@ QQ：172269588
 6. 用户界面 - 扫描文章
 
 == Changelog ==
+= 1.9.8 =
+Bug fixed: Fix the bug that the background tab click did not respond.<br />
+修复Bug：修复后台选项卡点击没反应的Bug。
+
 = 1.9.7 =
 New feature: Fix the bug that the backslash will be added automatically in manual mode.<br />
 新特性：修复手动模式下会自动加反斜杠的Bug。

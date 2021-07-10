@@ -264,12 +264,16 @@ QQWorld_auto_save_images.scan_posts = function() {
 
 	this.create = {};
 	this.create.events = function() {
-		$(".icon.help").tooltip({
-			show: {
-				effect: "slideDown",
-				delay: 250
-			}
-		});
+		try {
+			$(".icon.help").tooltip({
+				show: {
+					effect: "slideDown",
+					delay: 250
+				}
+			});
+		} catch (e) {
+			console.log(e);
+		}
 		$('select[name="posts_per_page"]').on('change', function() {
 			if ($(this).val() == '-1') $('input[name="offset"]').attr('disabled', true);
 			else $('input[name="offset"]').removeAttr('disabled', true);

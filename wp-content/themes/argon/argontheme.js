@@ -53,7 +53,7 @@ translation['en_US'] = {
 	"评论内容不能为空": "Comment content cannot be empty",
 	"编辑中": "Editing",
 	"正在编辑": "Editing",
-	"评论正在编辑中...": "Comment is editing",
+	"评论正在编辑中...": "Comment is being edited...",
 	"编辑": "Edit",
 	"评论编辑失败": "Comment editing failed",
 	"已编辑": "Edited",
@@ -385,6 +385,7 @@ if (argonConfig.headroom){
 	let $toggleBlogSettings = $('#fabtn_toggle_blog_settings_popup');
 	let $goToComment = $('#fabtn_go_to_comment');
 
+	let $readingProgressBtn = $('#fabtn_reading_progress');
 	let $readingProgressBar = $('#fabtn_reading_progress_bar');
 	let $readingProgressDetails = $('#fabtn_reading_progress_details');
 
@@ -492,13 +493,36 @@ if (argonConfig.headroom){
 		setBlogFilter(this.getAttribute("filter-name"));
 	});
 
+	let $window = $(window);
+
 	function changefabtnDisplayStatus(){
 		//阅读进度
-		let readingProgress = $(window).scrollTop() / Math.max($(document).height() - $(window).height(), 0.01);
-		$readingProgressDetails.html((readingProgress * 100).toFixed(0) + "%");
-		$readingProgressBar.css("width" , (readingProgress * 100).toFixed(0) + "%");
+		function hideReadingProgress(){
+			$readingProgressBtn.addClass("fabtn-hidden");
+		}
+		function setReadingProgress(percent){
+			$readingProgressBtn.removeClass("fabtn-hidden");
+			$readingProgressDetails.html((percent * 100).toFixed(0) + "%");
+			$readingProgressBar.css("width" , (percent * 100).toFixed(0) + "%");
+		}
+		if ($("article.post.post-full").length == 0){
+			hideReadingProgress();
+		}else{
+			let a = $window.scrollTop() - ($("article.post.post-full").offset().top - 80);
+			let b = $("article.post.post-full").outerHeight() + 50 - $window.height();
+			if (b <= 0){
+				hideReadingProgress();
+			}else{
+				readingProgress = a / b;
+				if (isNaN(readingProgress) || readingProgress < 0 || readingProgress > 1){
+					hideReadingProgress();
+				}else{
+					setReadingProgress(readingProgress);
+				}
+			}
+		}
 		//是否显示回顶
-		if ($(window).scrollTop() >= 400 || readingProgress >= 0.5){
+		if ($(window).scrollTop() >= 400){
 			$backToTopBtn.removeClass("fabtn-hidden");
 		}else{
 			$backToTopBtn.addClass("fabtn-hidden");
@@ -506,6 +530,9 @@ if (argonConfig.headroom){
 	}
 	changefabtnDisplayStatus();
 	$(window).scroll(function(){
+		changefabtnDisplayStatus();
+	});
+	$(window).resize(function(){
 		changefabtnDisplayStatus();
 	});
 	$fabtns.removeClass("fabtns-unloaded");
@@ -1073,6 +1100,57 @@ if (argonConfig.headroom){
 		}
 	});
 }();
+/*评论点赞*/
+$(document).on("click" , ".comment-upvote" , function(){
+	$this = $(this);
+	ID = $this.attr("data-id");
+	$this.addClass("comment-upvoting");
+	$.ajax({
+		url : argonConfig.wp_path + "wp-admin/admin-ajax.php",
+		type : "POST",
+		dataType : "json",
+		data : {
+			action: "upvote_comment",
+			comment_id : ID,
+		},
+		success : function(result){
+			$this.removeClass("comment-upvoting");
+			if (result.status == "success"){
+				$(".comment-upvote-num" , $this).html(result.total_upvote);
+				$this.addClass("upvoted");
+			}else{
+				$(".comment-upvote-num" , $this).html(result.total_upvote);
+				iziToast.show({
+					title: result.msg,
+					class: 'shadow-sm',
+					position: 'topRight',
+					backgroundColor: '#f5365c',
+					titleColor: '#ffffff',
+					messageColor: '#ffffff',
+					iconColor: '#ffffff',
+					progressBarColor: '#ffffff',
+					icon: 'fa fa-close',
+					timeout: 5000
+				});
+			}
+		},
+		error : function(xhr){
+			$this.removeClass("comment-upvoting");
+			iziToast.show({
+				title: __("点赞失败"),
+				class: 'shadow-sm',
+				position: 'topRight',
+				backgroundColor: '#f5365c',
+				titleColor: '#ffffff',
+				messageColor: '#ffffff',
+				iconColor: '#ffffff',
+				progressBarColor: '#ffffff',
+				icon: 'fa fa-close',
+				timeout: 5000
+			});
+		}
+	});
+});
 /*评论表情面板*/
 function lazyloadStickers(){
 	$(".emotion-keyboard .emotion-group:not(d-none) .emotion-item > img.lazyload").lazyload({threshold: 500, effect: "fadeIn"}).removeClass("lazyload");
@@ -1192,7 +1270,7 @@ function generateCommentTextAvatar(img){
 		hash = (hash * 233 + emailHash.charCodeAt(i)) % 16;
 	}
 	let colors = ['#e25f50', '#f25e90', '#bc67cb', '#9672cf', '#7984ce', '#5c96fa', '#7bdeeb', '#45d0e2', '#48b7ad', '#52bc89', '#9ace5f', '#d4e34a', '#f9d715', '#fac400', '#ffaa00', '#ff8b61', '#c2c2c2', '#8ea3af', '#a1877d', '#a3a3a3', '#b0b6e3', '#b49cde', '#c2c2c2', '#7bdeeb', '#bcaaa4', '#aed77f'];
-	let text = $(".comment-name", img.parent().parent()).text().trim()[0];
+	let text = $(".comment-name", img.parent().parent().parent()).text().trim()[0];
 	img.parent().html('<div class="avatar avatar-40 photo comment-text-avatar" style="background-color: ' + colors[hash] + ';">' + text + '</div>');
 }
 document.addEventListener("error", function(e){
@@ -1390,7 +1468,14 @@ function lazyloadInit(){
 	if (argonConfig.lazyload.effect == "none"){
 		delete argonConfig.lazyload.effect;
 	}
-	$("article img.lazyload:not(.lazyload-loaded) , .post-thumbnail.lazyload:not(.lazyload-loaded) , .related-post-thumbnail.lazyload:not(.lazyload-loaded)").lazyload(Object.assign(argonConfig.lazyload, {load: function(){$(this).addClass("lazyload-loaded")}}));
+	$("article img.lazyload:not(.lazyload-loaded) , .post-thumbnail.lazyload:not(.lazyload-loaded) , .related-post-thumbnail.lazyload:not(.lazyload-loaded)").lazyload(
+		Object.assign(argonConfig.lazyload, {
+			load: function () {
+				$(this).addClass("lazyload-loaded")
+				$(this).parent().removeClass("lazyload-container-unload")
+			}
+		})
+	);
 	$(".comment-item-text .comment-sticker.lazyload").lazyload(Object.assign(argonConfig.lazyload, {load: function(){$(this).removeClass("lazyload")}}));
 }
 lazyloadInit();
@@ -1420,14 +1505,14 @@ clampInit();
 /*Tippy.js*/
 function tippyInit(){
 	//Reference Popover
-	tippy('sup.reference[data-content]:not(tippy-initialized)', {
+	tippy('sup.reference[data-content]:not(.tippy-initialized)', {
 		content: (reference) => reference.getAttribute('data-content'),
 		allowHTML: true,
 		interactive: true,theme: 'light scroll-y',
 		delay: [100, 250],
 		animation: 'fade'
 	});
-	$("sup.reference[data-content]:not(tippy-initialized)").addClass("tippy-initialized");
+	$("sup.reference[data-content]:not(.tippy-initialized)").addClass("tippy-initialized");
 }
 tippyInit();
 
@@ -1555,13 +1640,13 @@ $(document).on("click" , "#blog_categories .tag" , function(){
 
 /*折叠区块小工具*/
 $(document).on("click" , ".collapse-block .collapse-block-title" , function(){
-	let id = this.getAttribute("collapse-id");
-	let selecter = ".collapse-block[collapse-id='" + id +"']";
-	$(selecter).toggleClass("collapsed");
-	if ($(selecter).hasClass("collapsed")){
-		$(selecter + " .collapse-block-body").stop(true , false).slideUp(200);
+	let block = $(this).parent();
+	$(block).toggleClass("collapsed");
+	let inner = $(".collapse-block-body", block);
+	if (block.hasClass("collapsed")){
+		inner.stop(true, false).slideUp(200);
 	}else{
-		$(selecter + " .collapse-block-body").stop(true , false).slideDown(200);
+		inner.stop(true, false).slideDown(200);
 	}
 	$("html").trigger("scroll");
 });
@@ -1593,7 +1678,6 @@ function getGithubInfoCardContent(){
 					$(".github-info-card-description" , $this).html(description);
 					$(".github-info-card-stars" , $this).html(result.stargazers_count);
 					$(".github-info-card-forks" , $this).html(result.forks_count);
-					//console.log(result);
 				},
 				error : function(xhr){
 					if (xhr.status == 404){
@@ -1948,6 +2032,7 @@ function randomString(len) {
 	for (let i = 0; i < len; i++) {
 		res += chars.charAt(Math.floor(Math.random() * chars.length));
 	}
+	res[0] = chars.charAt(Math.floor(Math.random() * (chars.length - 10)));
 	return res;
 }
 var codeOfBlocks = {};
@@ -1969,10 +2054,10 @@ function highlightJsRender(){
 	if (typeof(hljs) == "undefined"){
 		return;
 	}
-	if (typeof(argonConfig.enable_code_highlight) == "undefined"){
+	if (typeof(argonConfig.code_highlight.enable) == "undefined"){
 		return;
 	}
-	if (!argonConfig.enable_code_highlight){
+	if (!argonConfig.code_highlight.enable){
 		return;
 	}
 	$("article pre.code").each(function(index, block) {
@@ -1989,6 +2074,12 @@ function highlightJsRender(){
 		hljs.highlightBlock(block);
 		hljs.lineNumbersBlock(block, {singleLine: true});
 		$(block).parent().addClass("hljs-codeblock");
+		if (argonConfig.code_highlight.hide_linenumber){
+			$(block).parent().addClass("hljs-hide-linenumber");
+		}
+		if (argonConfig.code_highlight.break_line){
+			$(block).parent().addClass("hljs-break-line");
+		}
 		$(block).attr("hljs-codeblock-inner", "");
 		let copyBtnID = "copy_btn_" + randomString();
 		$(block).parent().append(`<div class="hljs-control hljs-title">

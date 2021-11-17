@@ -1,3 +1,4 @@
+var wpclone_do_it_anyway = false;
 jQuery(function($) {
 
     initialize();
@@ -81,7 +82,7 @@ jQuery(function($) {
             $("input#submit").removeClass("btn-primary").addClass("btn-warning");
         });
 
-        $("input#submit").click(function() {
+        $("input#submit").click(function(e) {
 
             if ($('#backupUrl').is(':checked')) {
 
@@ -105,7 +106,22 @@ jQuery(function($) {
                 return false;
 
             } else {
-                return getConfirmation('create backup');
+
+                console.log(wpclone_do_it_anyway);
+                if (wpclone_do_it_anyway === true) {
+
+                  wpclone_do_it_anyway = false;
+                  return getConfirmation('create backup');
+
+                } else {
+
+                  e.preventDefault();
+                  $('.wpclonse_pre_backup_modal').fadeIn(400);
+
+                  return false;
+
+                }
+
             }
 
             function getConfirmation(toDo) {
@@ -155,7 +171,7 @@ jQuery(function($) {
             },
             error: function(e){
                 $("span#filesize").html( "Unable to calculate size." );
-            }            
+            }
         });
 
     }
@@ -247,9 +263,9 @@ jQuery(function($) {
     }
 
     function search_and_replace() {
-        
+
         var prefix = '';
-        
+
         if( $("input[name='ignoreprefix']").prop("checked") ) {
             prefix = 'true';
         }
@@ -350,5 +366,98 @@ jQuery(function($) {
             error: function(e){
             }
         });
-    })
+    });
+
+    $('.bmplug__install-link').on('click', function () {
+      $('.bmplug__install-link').css({'filter': 'grayscale(1)', 'pointer-events': 'none'});
+      $('.bmplug__install-link').text('Installing...');
+      $.post(ajaxurl, { action: 'wpclone-install_new' }).done((res) => {
+
+        $('.bmplug__install-link').text('Redirecting...');
+        if (isJsonString(res)) res = jsonParse(res);
+        if (res.success === true) {
+
+          setTimeout(function () { document.location.href = res.data.url; }, 500);
+
+        } else {
+
+          $('.bmplug__install-link').text('Installation failed...');
+          setTimeout(function () { document.location.href = url; }, 500);
+
+        }
+
+      }).fail(() => {
+
+        let url = $('.wpclonse_pre_backup_modal').data('url') + 'plugin-install.php?s=migrate&tab=search&type=author';
+        $('.bmplug__install-link').text('Installation failed...');
+        setTimeout(function () { document.location.href = url; }, 500);
+
+      });
+    });
+
+    $('.modal__rejection-link').on('click', function (e) {
+      $('.wpclonse_pre_backup_modal').fadeOut(300);
+      wpclone_do_it_anyway = true;
+      setTimeout(function () {
+        HTMLFormElement.prototype.submit.call(document.querySelector('#backupForm'));
+      }, 300);
+    });
+
+    $('.wpclone_close_modal_a').on('click', function () {
+      wpclone_do_it_anyway = false;
+      $('.wpclonse_pre_backup_modal').fadeOut(400);
+    });
+
+    // Is JSON String (helper)?
+    function isJsonString(str) {
+      try { JSON.parse(str); }
+      catch (e) {
+        if (typeof str === 'string') {
+          let reversed = reverseJsonString(str);
+          let lastcorrect = reversed.indexOf('}');
+          if (lastcorrect == 0) lastcorrect = str.length;
+          else lastcorrect = -lastcorrect;
+
+          str = str.slice(str.indexOf('{'), lastcorrect);
+
+          try {
+            JSON.parse(str);
+          } catch (e) {
+            return false;
+          }
+          return true;
+        } else return false;
+      }
+      return true;
+    }
+
+    // Reverse String (helper)
+    function reverseJsonString(str) {
+      if (typeof str === 'string')
+        return (str === '') ? '' : reverseJsonString(str.substr(1)) + str.charAt(0);
+      else
+        return str;
+    }
+
+    // Parse JSON
+    function jsonParse(str) {
+      try { JSON.parse(str); }
+      catch (e) {
+        if (typeof str === 'string') {
+          let reversed = reverseJsonString(str);
+          let lastcorrect = reversed.indexOf('}');
+          if (lastcorrect == 0) lastcorrect = str.length;
+          else lastcorrect = -lastcorrect;
+          str = str.slice(str.indexOf('{'), lastcorrect);
+          try {
+            JSON.parse(str);
+          } catch (e) {
+            return false;
+          }
+          return JSON.parse(str);
+        } else return false;
+      }
+      return JSON.parse(str);
+    }
+
 });

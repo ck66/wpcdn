@@ -4,15 +4,16 @@ Tags: migrate, clone, backup, migration, backups, copy, restore, recover, restor
 Author URI: https://backupbliss.com
 Requires PHP: 5.5
 Requires at least: 3.3
-Tested up to: 5.7.1
-Stable tag: 2.3.2
+Tested up to: 5.8.1
+Stable tag: 2.3.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
-
 
 100% FREE clone and migration
 
 == Description ==
+
+**Try it out on your free dummy site: Click here => [https://tastewp.com/plugins/wp-clone-by-wp-academy](https://tastewp.com/create/NMS/7.4/5.7.1/wp-clone-by-wp-academy/tastewp-default/CONCATENATE_SCRIPTS/?redirect-menu=wp-clone)**.
 
 WP Clone is a great way to backup, migrate or clone a WordPress site to another domain or hosting server.
 
@@ -57,6 +58,8 @@ Note:
 = Credits =
 WP Clone uses functions from the "Safe Search and Replace on Database with Serialized Data" script first written by David Coveney of Interconnect IT Ltd (UK) http://www.davidcoveney.com or http://www.interconnectit.com and released under the WTFPL http://sam.zoy.org/wtfpl/. Partial script with full changelog is placed inside 'lib/files' directory.
 
+This plugin is part of the Inisev product family - [check out our other products](https://inisev.com).
+
 == Installation ==
 
 1. Navigate to Plugins > Add New
@@ -68,6 +71,14 @@ WP Clone uses functions from the "Safe Search and Replace on Database with Seria
 Backup and migration FAQ are under construction
 
 == Changelog ==
+
+= 2.3.3 =
+* Added support for WordPress 5.8.1
+* Added new modals
+* Removed notices from error logging
+
+= 2.3.2 =
+* Added support for WordPress 5.8
 
 = 2.3.1 =
 * Updated information banner
@@ -154,5 +165,5 @@ Backup and migration FAQ are under construction
 
 == Upgrade Notice ==
 
-= 2.2.10 =
+= 2.3.3 =
 * Please upgrade!

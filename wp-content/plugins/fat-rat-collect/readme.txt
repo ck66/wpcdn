@@ -1,11 +1,11 @@
 === 胖鼠采集(Fat Rat Collect) 微信知乎简书腾讯新闻列表分页采集, 还有自动采集、自动发布、自动标签、等多项功能。开源插件 ===
 Contributors: KitePig
-Donate link: https://www.fatrat.cn/bounty
+Donate link: https://www.fatrat.cn/docs/v2/bounty
 Tags: 采集,微信公众号文章采集,知乎采集,列表采集,批量采集,分页采集,自动标签,自动采集,自动发布,seo,免费采集插件,caiji,pangshu
 Requires at least: 4.6
-Tested up to: 5.8
-Stable tag: 2.5.2
-Requires PHP: 7.1
+Tested up to: 5.9.3
+Stable tag: 2.6.1
+Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,18 @@ php推荐 使用php72及以上版本
 6. 工具箱特色小工具
 
 == Changelog ==
+
+= 2.6.1
+* 修复采集列表或者分页的时候，被目标站防采集命中，会出现的采集数据的url不一致、但是数据的标题以及内容和源网站不一样，数据会重复的bug
+
+= 2.6.0
+* 升级组件，兼容PHP8
+* 修复数据桶分页数量bug
+* 修复自动采集html展示问题
+* 修复配置数量为5个无法编辑问题
+* 优化文案
+* 优化项目结构
+* 使用composer自动加载
 
 = 2.5.2
 * 修复关键词随机插入保存错误
